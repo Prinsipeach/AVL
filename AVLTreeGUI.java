@@ -69,9 +69,9 @@ class AVLTree {
         if (key < node.key) {
             node.left = insert(node.left, key);
         } else if (key > node.key) {
-            return node; // Duplicate keys not allowed
-        } else {
             node.right = insert(node.right, key);
+        } else {
+            return node; // Duplicate keys not allowed
         }
 
         node.height = 1 + Math.max(height(node.left), height(node.right));
@@ -192,7 +192,22 @@ class AVLTree {
         return key < root.key ? search(root.left, key) : search(root.right, key);
     }
 
-    // For visualization
+    // Inorder traversal
+    public String inorder() {
+        StringBuilder sb = new StringBuilder();
+        inorder(root, sb);
+        return sb.toString();
+    }
+
+    private void inorder(AVLNode node, StringBuilder sb) {
+        if (node != null) {
+            inorder(node.left, sb);
+            sb.append(node.key).append(" ");
+            inorder(node.right, sb);
+        }
+    }
+
+    // For visualization - improved version
     public void drawTree(JPanel panel) {
         panel.removeAll();
         if (root != null) {
@@ -216,31 +231,31 @@ class AVLTree {
         panel.add(nodeLabel);
 
         // Draw lines to children
-        if (node.left != null) {
-            int childX = x - xOffset;
-            int childY = y + 80;
-            Graphics g = panel.getGraphics();
+        Graphics g = panel.getGraphics();
+        if (g != null) {
             g.setColor(Color.BLUE);
-            g.drawLine(x, y, childX, childY);
-            drawTree(node.left, panel, childX, childY, xOffset / 2);
-        }
-        if (node.right != null) {
-            int childX = x + xOffset;
-            int childY = y + 80;
-            Graphics g = panel.getGraphics();
-            g.setColor(Color.BLUE);
-            g.drawLine(x, y, childX, childY);
-            drawTree(node.right, panel, childX, childY, xOffset / 2);
+            if (node.left != null) {
+                int childX = x - xOffset;
+                int childY = y + 80;
+                g.drawLine(x, y, childX, childY);
+                drawTree(node.left, panel, childX, childY, xOffset / 2);
+            }
+            if (node.right != null) {
+                int childX = x + xOffset;
+                int childY = y + 80;
+                g.drawLine(x, y, childX, childY);
+                drawTree(node.right, panel, childX, childY, xOffset / 2);
+            }
         }
     }
 }
 
-public class AVLTreeGUI extends JFrame {
+public class BSCS1_Ang_avl extends JFrame {
     private AVLTree avlTree;
     private JPanel treePanel;
     private JTextField inputField;
 
-    public AVLTreeGUI() {
+    public BSCS1_Ang_avl() {
         avlTree = new AVLTree();
         initializeUI();
     }
@@ -257,6 +272,7 @@ public class AVLTreeGUI extends JFrame {
         JButton insertButton = new JButton("Insert");
         JButton deleteButton = new JButton("Delete");
         JButton searchButton = new JButton("Search");
+        JButton inorderButton = new JButton("Inorder Traversal");
 
         insertButton.addActionListener(new ActionListener() {
             @Override
@@ -264,7 +280,7 @@ public class AVLTreeGUI extends JFrame {
                 try {
                     int key = Integer.parseInt(inputField.getText());
                     avlTree.insert(key);
-                    System.out.println("Inserted: " + key);
+                    System.out.println("Inserted: " + key + " | Inorder: " + avlTree.inorder());
                     avlTree.drawTree(treePanel);
                     inputField.setText("");
                 } catch (NumberFormatException ex) {
@@ -279,7 +295,7 @@ public class AVLTreeGUI extends JFrame {
                 try {
                     int key = Integer.parseInt(inputField.getText());
                     avlTree.delete(key);
-                    System.out.println("Deleted: " + key);
+                    System.out.println("Deleted: " + key + " | Inorder: " + avlTree.inorder());
                     avlTree.drawTree(treePanel);
                     inputField.setText("");
                 } catch (NumberFormatException ex) {
@@ -302,11 +318,21 @@ public class AVLTreeGUI extends JFrame {
             }
         });
 
+        inorderButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String traversal = avlTree.inorder();
+                JOptionPane.showMessageDialog(null, 
+                    "Inorder Traversal: " + traversal);
+            }
+        });
+
         controlPanel.add(new JLabel("Enter key:"));
         controlPanel.add(inputField);
         controlPanel.add(insertButton);
         controlPanel.add(deleteButton);
         controlPanel.add(searchButton);
+        controlPanel.add(inorderButton);
 
         // Tree visualization panel
         treePanel = new JPanel() {
@@ -329,7 +355,7 @@ public class AVLTreeGUI extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                AVLTreeGUI gui = new AVLTreeGUI();
+                BSCS1_Ang_avl gui = new BSCS1_Ang_avl();
                 gui.setVisible(true);
             }
         });
