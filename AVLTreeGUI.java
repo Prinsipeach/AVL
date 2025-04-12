@@ -313,7 +313,7 @@ public class AVLTreeGUI extends JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                setBackground(new Color(240, 240, 240));
+                setBackground(new Color(0, 0, 0));
             }
         };
         treePanel.setLayout(null);
